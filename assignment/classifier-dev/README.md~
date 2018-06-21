@@ -20,5 +20,9 @@ This assignment builds directly on the [TensorFlow Introduction](../a1/tensorflo
 
 You can either use the environment.yml file to set up a virtual environment or install the required packages. All experiments and tests can be run inside the required notebooks.
 
+Use the environment.yml file by running:
+
+conda env create -f environment.yml
+
 ---
 
