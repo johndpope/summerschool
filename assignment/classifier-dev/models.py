@@ -16,7 +16,7 @@ def embedding_layer(ids_, V, embed_dim, init_scale=0.001, init_vecs=None):
         V: (int) vocabulary size
         embed_dim: (int) embedding dimension
         init_scale: (float) scale to initialize embeddings
-        init_vecs: (numpy array or None), if non-None, initialize with these 
+        init_vecs: (numpy array or None), if non-None, initialize with these
         embeddings.
 
     Returns:
@@ -25,8 +25,8 @@ def embedding_layer(ids_, V, embed_dim, init_scale=0.001, init_vecs=None):
     """
     #### YOUR CODE HERE ####
     if init_vecs is not None:
-        embed_scale_ = tf.get_variable("W_embed_scale", shape=[], 
-                                       dtype=tf.float32, 
+        embed_scale_ = tf.get_variable("W_embed_scale", shape=[],
+                                       dtype=tf.float32,
                                        initializer=tf.constant_initializer(init_scale))
         W_embed_ = embed_scale_ * tf.constant(init_vecs, name="W_embed")
     else:
@@ -159,7 +159,7 @@ def BOW_encoder(ids_, ns_, V, embed_dim, hidden_dims, dropout_rate=0,
         hidden_dims: list(int) dimensions of the output of each layer
         dropout_rate: (float) rate to use for dropout
         is_training: (bool) if true, is in training mode
-        embed_vecs: (numpy array, optional) V x embed_dim matrix to initialize 
+        embed_vecs: (numpy array, optional) V x embed_dim matrix to initialize
             embeddings.
 
     Returns: (h_, xs_)
@@ -208,11 +208,18 @@ def classifier_model_fn(features, labels, mode, params):
     # Check if this graph is going to be used for training.
     is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
+    xs_ = None  # placeholder
     if params['encoder_type'] == 'bow':
         with tf.variable_scope("Encoder"):
             h_, xs_ = BOW_encoder(features['ids'], features['ns'],
                                   is_training=is_training,
                                   **params)
+    elif params['encoder_type'] == 'mlp':
+        with tf.variable_scope("Encoder"):
+            x_ = features['x']
+            h_ = fully_connected_layers(x_, params['hidden_dims'],
+                                        dropout_rate=params.get('dropout_rate', 0),
+                                        is_training=is_training)
     else:
         raise ValueError("Error: unsupported encoder type "
                          "'{:s}'".format(params['encoder_type']))
@@ -233,7 +240,9 @@ def classifier_model_fn(features, labels, mode, params):
 
     # L2 regularization (weight decay) on parameters, from all layers
     with tf.variable_scope("Regularization"):
-        l2_penalty_ = tf.nn.l2_loss(xs_)  # l2 loss on embeddings
+        l2_penalty_ = tf.constant(0.0, dtype=tf.float32)
+        if xs_ is not None:
+            l2_penalty_ += tf.nn.l2_loss(xs_)  # l2 loss on embeddings
         for var_ in tf.trainable_variables():
             if "Embedding_Layer" in var_.name:
                 continue
