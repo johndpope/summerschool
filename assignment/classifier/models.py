@@ -33,6 +33,8 @@ def embedding_layer(ids_, V, embed_dim, init_scale=0.001, init_vecs=None):
         # Approximately 2-3 lines of code.
         # Please name your embedding matrix 'W_embed', as in:
         #   W_embed_ = tf.get_variable("W_embed", ...)
+        pass
+
 
 
 
