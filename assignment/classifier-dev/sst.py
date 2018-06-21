@@ -167,6 +167,10 @@ class SSTDataset(object):
             df = df[df.is_root]
         return df
 
+    def as_token_list(self, split='train', root_only=False, df_idxs=None):
+        df = self.get_filtered_split(split, df_idxs, root_only)
+        return df.tokens, np.array(df.label, dtype=np.int32)
+
     def as_padded_array(self, split='train', max_len=40, pad_id=0,
                         root_only=False, df_idxs=None):
         """Return the dataset as a (padded) NumPy array.
