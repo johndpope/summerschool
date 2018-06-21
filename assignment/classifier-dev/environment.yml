@@ -3,12 +3,14 @@ channels:
     - anaconda
     - conda-forge
 dependencies:
+    - jupyter
     - python=3.6
     - tensorflow=1.8.0
     - numpy=1.14.5
     - nltk=3.2.5
     - scikit-learn=0.19.1
     - pandas=0.20.3
+    - bokeh=0.12.13
     - pip:
         - graphviz
         - wget
