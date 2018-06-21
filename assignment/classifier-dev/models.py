@@ -35,6 +35,8 @@ def embedding_layer(ids_, V, embed_dim, init_scale=0.001, init_vecs=None):
         #   W_embed_ = tf.get_variable("W_embed", ...)
         init_ = tf.random_uniform_initializer(-init_scale, init_scale)  #--SOLUTION--
         W_embed_ = tf.get_variable("W_embed", shape=[V, embed_dim], initializer=init_)  #--SOLUTION--
+        pass
+
     xs_ = tf.nn.embedding_lookup(W_embed_, ids_, name="xs")  #--SOLUTION--
 
 
