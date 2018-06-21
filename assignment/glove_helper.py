@@ -8,7 +8,7 @@ import zipfile
 
 import numpy as np
 
-from w266_common import vocabulary
+from common import vocabulary
 
 def download_glove(output_dir="data"):
     import wget
