@@ -123,6 +123,8 @@ class SSTDataset(object):
 
     def __init__(self, V=10000):
         self.vocab = None
+        if isinstance(V, vocabulary.Vocabulary):
+            self.vocab = V
         self.zipped_filename = "data/sst/trainDevTestTrees_PTB.zip"
         self.target_names = None  # set by self.process()
 
@@ -146,10 +148,13 @@ class SSTDataset(object):
         assert(len(self.test_trees)  == 2210)
 
         # Build vocabulary over training set
-        print("Building vocabulary - ", end="")
-        train_words = utils.flatten(self.canonicalize(t.leaves())
-                                    for t in self.train_trees)
-        self.vocab = vocabulary.Vocabulary(train_words, size=V)
+        if self.vocab is None:
+            print("Building vocabulary - ", end="")
+            train_words = utils.flatten(self.canonicalize(t.leaves())
+                                        for t in self.train_trees)
+            self.vocab = vocabulary.Vocabulary(train_words, size=V)
+        else:
+            print("Using pre-built vocabulary - ", end="")
         print("{:,} words".format(self.vocab.size))
 
     def get_filtered_split(self, split='train', df_idxs=None, root_only=False):

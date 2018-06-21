@@ -3,7 +3,7 @@ from __future__ import division
 
 import tensorflow as tf
 
-def embedding_layer(ids_, V, embed_dim, init_scale=0.001):
+def embedding_layer(ids_, V, embed_dim, init_scale=0.001, init_vecs=None):
     """Construct an embedding layer.
 
     You should define a variable for the embedding matrix, and initialize it
@@ -16,6 +16,8 @@ def embedding_layer(ids_, V, embed_dim, init_scale=0.001):
         V: (int) vocabulary size
         embed_dim: (int) embedding dimension
         init_scale: (float) scale to initialize embeddings
+        init_vecs: (numpy array or None), if non-None, initialize with these 
+        embeddings.
 
     Returns:
         xs_: [batch_size, max_len, embed_dim] Tensor of float32, embeddings for
@@ -25,8 +27,14 @@ def embedding_layer(ids_, V, embed_dim, init_scale=0.001):
     # Approximately 2-3 lines of code.
     # Please name your embedding matrix 'W_embed', as in:
     #   W_embed_ = tf.get_variable("W_embed", ...)
-    init_ = tf.random_uniform_initializer(-init_scale, init_scale)  #--SOLUTION--
-    W_embed_ = tf.get_variable("W_embed", shape=[V, embed_dim], initializer=init_)  #--SOLUTION--
+    if init_vecs is not None:
+        #  init_ = tf.constant_initializer(value=init_vecs,    #--SOLUTION--
+        #                                  dtype=tf.float32,   #--SOLUTION--
+        #                                  verify_shape=True)  #--SOLUTION--
+        W_embed_ = tf.constant(init_vecs, name="W_embed")
+    else:
+        init_ = tf.random_uniform_initializer(-init_scale, init_scale)  #--SOLUTION--
+        W_embed_ = tf.get_variable("W_embed", shape=[V, embed_dim], initializer=init_)  #--SOLUTION--
     xs_ = tf.nn.embedding_lookup(W_embed_, ids_, name="xs")  #--SOLUTION--
 
 
@@ -127,7 +135,7 @@ def softmax_output_layer(h_, labels_, num_classes):
     return loss_, logits_
 
 def BOW_encoder(ids_, ns_, V, embed_dim, hidden_dims, dropout_rate=0,
-                is_training=None,
+                is_training=None, embed_vecs=None,
                 **unused_kw):
     """Construct a bag-of-words encoder.
 
@@ -151,6 +159,8 @@ def BOW_encoder(ids_, ns_, V, embed_dim, hidden_dims, dropout_rate=0,
         hidden_dims: list(int) dimensions of the output of each layer
         dropout_rate: (float) rate to use for dropout
         is_training: (bool) if true, is in training mode
+        embed_vecs: (numpy array, optional) V x embed_dim matrix to initialize 
+            embeddings.
 
     Returns: (h_, xs_)
         h_: [batch_size, hidden_dims[-1]] Tensor of float32, the activations of
@@ -165,7 +175,7 @@ def BOW_encoder(ids_, ns_, V, embed_dim, hidden_dims, dropout_rate=0,
     with tf.variable_scope("Embedding_Layer"):
         #### YOUR CODE HERE ####
         xs_ = None  # replace with a call to embedding_layer
-        xs_ = embedding_layer(ids_, V, embed_dim)  #--SOLUTION--
+        xs_ = embedding_layer(ids_, V, embed_dim, init_vecs=embed_vecs)  #--SOLUTION--
         #### END(YOUR CODE) ####
 
     #### YOUR CODE HERE ####
