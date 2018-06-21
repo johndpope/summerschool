@@ -1,1 +1,4 @@
-This is the README for the first lab
+To run this lab: 
+1. Dowload the Git repository "assignment".
+2. From the command line, run "jupyter notebook".
+3. From the Jupyter notebook console, open "Compositional_Semantics.ipynb"
