@@ -24,15 +24,15 @@ def embedding_layer(ids_, V, embed_dim, init_scale=0.001, init_vecs=None):
             each element in ids_
     """
     #### YOUR CODE HERE ####
-    # Approximately 2-3 lines of code.
-    # Please name your embedding matrix 'W_embed', as in:
-    #   W_embed_ = tf.get_variable("W_embed", ...)
     if init_vecs is not None:
-        #  init_ = tf.constant_initializer(value=init_vecs,    #--SOLUTION--
-        #                                  dtype=tf.float32,   #--SOLUTION--
-        #                                  verify_shape=True)  #--SOLUTION--
-        W_embed_ = tf.constant(init_vecs, name="W_embed")
+        embed_scale_ = tf.get_variable("W_embed_scale", shape=[], 
+                                       dtype=tf.float32, 
+                                       initializer=tf.constant_initializer(init_scale))
+        W_embed_ = embed_scale_ * tf.constant(init_vecs, name="W_embed")
     else:
+        # Approximately 2-3 lines of code.
+        # Please name your embedding matrix 'W_embed', as in:
+        #   W_embed_ = tf.get_variable("W_embed", ...)
         init_ = tf.random_uniform_initializer(-init_scale, init_scale)  #--SOLUTION--
         W_embed_ = tf.get_variable("W_embed", shape=[V, embed_dim], initializer=init_)  #--SOLUTION--
     xs_ = tf.nn.embedding_lookup(W_embed_, ids_, name="xs")  #--SOLUTION--
